@@ -1,0 +1,80 @@
+// Variables
+$sidebar-width: 280px;
+$navbar-height: 70px;
+$bg-body: #f8fafc; // Soft slate white for clinical feel
+$primary-blue: #4f64ff;
+$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+.hms-main-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: $bg-body;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+
+  // The wrapper for everything to the right of the sidebar
+  .main-content-wrapper {
+    flex: 1;
+    margin-left: $sidebar-width; // Prevents content from going under the fixed sidebar
+    display: flex;
+    flex-direction: column;
+    min-width: 0; // Fixes flexbox overflow issues
+    transition: $transition-smooth;
+
+    @media (max-width: 1024px) {
+      margin-left: 0; // Setup for future mobile responsiveness
+    }
+  }
+
+  // The actual scrollable area where your pages load
+  .page-body {
+    padding: 2rem;
+    flex: 1;
+    overflow-y: auto;
+    
+    // Add a slight fade-in animation for page transitions
+    animation: fadeIn 0.4s ease-out;
+
+    // Custom Scrollbar for a premium look
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 10px;
+      &:hover {
+        background: #cbd5e1;
+      }
+    }
+  }
+}
+
+// Global Page Heading styles inside the layout
+.page-header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .header-titles {
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #1e293b;
+      letter-spacing: -0.025em;
+    }
+    p {
+      color: #64748b;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+  }
+}
+
+// Animation
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,133 @@
+$primary-blue: #4f64ff;
+$bg-white: #ffffff;
+$text-dark: #1e293b;
+$text-muted: #94a3b8;
+$hover-bg: #eff6ff;
+
+.hms-sidebar {
+  width: 280px;
+  height: 100vh;
+  background: $bg-white;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1100;
+
+  .sidebar-brand {
+    padding: 2.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .brand-logo {
+      background: linear-gradient(135deg, #2b3bfe, #5973fe);
+      padding: 10px;
+      border-radius: 12px;
+      color: white;
+      box-shadow: 0 8px 16px rgba(43, 59, 254, 0.2);
+    }
+
+    .brand-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: $text-dark;
+      letter-spacing: -0.5px;
+      span { color: $primary-blue; }
+    }
+  }
+
+  .sidebar-menu {
+    flex: 1;
+    padding: 0 1.25rem;
+    overflow-y: auto;
+
+    .menu-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 1.5rem 0 0.75rem 0.75rem;
+      
+      &.secondary { margin-top: 2.5rem; }
+    }
+
+    .menu-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 0.85rem 1rem;
+        border-radius: 14px;
+        text-decoration: none;
+        color: #64748b;
+        font-weight: 600;
+        transition: 0.3s;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+
+        .icon { display: flex; align-items: center; }
+
+        &:hover {
+          color: $primary-blue;
+          background: $hover-bg;
+        }
+
+        &.active {
+          background: $primary-blue;
+          color: white;
+          box-shadow: 0 10px 15px -3px rgba(79, 100, 255, 0.3);
+        }
+
+        &.logout-btn:hover {
+          background: #fff1f2;
+          color: #ff4d6a;
+        }
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+
+    .user-mini-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8fafc;
+      padding: 0.75rem;
+      border-radius: 14px;
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        background: #e2e8f0;
+        color: $text-dark;
+        font-weight: 700;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+      }
+
+      .details {
+        .name { font-size: 0.85rem; font-weight: 700; color: $text-dark; line-height: 1; }
+        .status { font-size: 0.7rem; color: #22c55e; font-weight: 600; margin-top: 2px; }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    /* Base Options: */
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler", 
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "noEmit": true, // Using ts-node/esm for development
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+
+    /* Modern Module Handling */
+    "verbatimModuleSyntax": false, // Set to false to stop the import errors you saw
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* File Layout */
+    "rootDir": "./src",
+    /* No outDir needed while in development with ts-node */
+
+    /* Type Definitions */
+    "types": ["node"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
