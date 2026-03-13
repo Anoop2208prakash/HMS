@@ -1,0 +1,18 @@
+$primary-blue: #4f64ff;
+
+.hms-loader-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+
+  .MuiCircularProgress-root {
+    // Custom color if not using MUI theme
+    color: $primary-blue;
+    
+    // Add a soft glow effect
+    filter: drop-shadow(0 0 8px rgba(79, 100, 255, 0.2));
+  }
+}

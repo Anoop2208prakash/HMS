@@ -1,47 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Mail, Lock, Eye, EyeOff, Phone, Inbox, Heart } from 'lucide-react';
+import HMSAlert from '../../components/common/HMSAlert'; 
+import HMSLoader from '../../components/common/HMSLoader'; 
 import '../../styles/features/Login.scss';
 
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  
+  // Alert state
+  const [alert, setAlert] = useState<{ show: boolean; msg: string; type: 'success' | 'error' }>({ 
+    show: false, 
+    msg: '', 
+    type: 'error' 
+  });
 
-  // 1. State for form data
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
 
+  // Auto-hide alert after 5 seconds
+  useEffect(() => {
+    if (alert.show) {
+      const timer = setTimeout(() => {
+        setAlert(prev => ({ ...prev, show: false }));
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert.show]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.type]: e.target.value });
-    if (error) setError(''); // Clear error when user starts typing
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (alert.show) setAlert(prev => ({ ...prev, show: false }));
   };
 
-  // 2. Handle the Sign In click
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setAlert({ show: false, msg: '', type: 'error' });
 
     try {
-      // Send request to your backend
       const response = await axios.post('http://localhost:5000/api/auth/login', formData);
 
       if (response.data.token) {
-        // ✅ Success: Store token and user data
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-
-        // 🚀 Redirect to the dashboard
-        navigate('/dashboard');
+        
+        // Show success alert before navigating
+        setAlert({ show: true, msg: 'Login Successful! Redirecting...', type: 'success' });
+        
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
       }
     } catch (err: any) {
-      // ❌ Error: Show message from backend (e.g., "User not found" or "Invalid credentials")
-      setError(err.response?.data?.message || 'Login failed. Please check your connection.');
+      // ✅ Handled 'any' type error and set alert
+      const errorMsg = err.response?.data?.message || 'Login failed. Please check your connection.';
+      setAlert({ show: true, msg: errorMsg, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -49,8 +69,15 @@ const Login = () => {
 
   return (
     <div className="login-wrapper">
+      {/* Global Alert Placement */}
+      <HMSAlert 
+        severity={alert.type} 
+        isOpen={alert.show} 
+        message={alert.msg} 
+        onClose={() => setAlert(prev => ({ ...prev, show: false }))} 
+      />
+
       <div className="login-card-container">
-        
         {/* Left Side: Branding */}
         <div className="login-branding-panel">
           <div className="logo-header">
@@ -71,15 +98,13 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
-            {/* Display Error Message */}
-            {error && <p className="error-text" style={{ color: '#ff4d6a', fontWeight: 'bold' }}>{error}</p>}
-
             <div className="form-group">
               <label>Email</label>
               <div className="input-container">
                 <Mail className="input-icon" size={20} />
                 <input 
                   type="email" 
+                  name="email" 
                   placeholder="jane.doe@email.com" 
                   value={formData.email}
                   onChange={handleChange}
@@ -94,6 +119,7 @@ const Login = () => {
                 <Lock className="input-icon" size={20} />
                 <input 
                   type={showPassword ? "text" : "password"} 
+                  name="password" 
                   placeholder="••••••••••••" 
                   value={formData.password}
                   onChange={handleChange}
@@ -110,7 +136,12 @@ const Login = () => {
             </div>
 
             <button type="submit" className="signin-submit-btn" disabled={loading}>
-              {loading ? 'Checking...' : 'Sign In'}
+              {loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
+                  <HMSLoader size={20} color="inherit" />
+                  <span>Verifying...</span>
+                </div>
+              ) : 'Sign In'}
             </button>
           </form>
 
@@ -121,7 +152,6 @@ const Login = () => {
             <div className="contact-item"><Inbox size={16} /> <span>Info@mydiscountedlabs.in</span></div>
           </div>
         </div>
-
       </div>
     </div>
   );

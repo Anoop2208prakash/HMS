@@ -1,5 +1,6 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { 
   LayoutDashboard, 
   Users, 
@@ -9,13 +10,35 @@ import {
   FileText, 
   Settings, 
   LogOut,
-  Heart
+  Heart,
+  ShieldUser // Icon for Staff
 } from 'lucide-react';
 import '../styles/layouts/Sidebar.scss';
 
 const Sidebar = () => {
+  const [user, setUser] = useState<{ name: string; avatar?: string } | null>(null);
+  const navigate = useNavigate();
+
+  // Fetch user data for the mini-card
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const response = await axios.get('http://localhost:5000/api/auth/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error("Sidebar user fetch failed", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const menuItems = [
     { path: '/dashboard', label: 'Overview', icon: <LayoutDashboard size={22} /> },
+    { path: '/dashboard/staff', label: 'Staff Management', icon: <ShieldUser size={22} /> }, // Added Staff link
     { path: '/dashboard/patients', label: 'Patients', icon: <Users size={22} /> },
     { path: '/dashboard/doctors', label: 'Doctors', icon: <Stethoscope size={22} /> },
     { path: '/dashboard/appointments', label: 'Appointments', icon: <Calendar size={22} /> },
@@ -25,7 +48,8 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location.href = '/';
+    localStorage.removeItem('user');
+    navigate('/');
   };
 
   return (
@@ -73,10 +97,19 @@ const Sidebar = () => {
 
       <div className="sidebar-footer">
         <div className="user-mini-card">
-          <div className="avatar">AP</div>
+          <div className="avatar">
+            {user?.avatar ? (
+              <img src={user.avatar} alt="user" className="avatar-img" />
+            ) : (
+              user?.name?.charAt(0) || 'U'
+            )}
+          </div>
           <div className="details">
-            <p className="name">Anoop Prakash</p>
-            <p className="status">Online</p>
+            <p className="name">{user?.name || 'Loading...'}</p>
+            <div className="status-indicator">
+              <span className="dot"></span>
+              <p className="status">Online</p>
+            </div>
           </div>
         </div>
       </div>

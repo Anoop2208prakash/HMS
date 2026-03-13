@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+// Variables
 $primary: #4f64ff;
 $primary-light: #7a8cff;
 $bg-gradient: linear-gradient(135deg, #2b3bfe 0%, #5973fe 100%);
@@ -15,6 +16,7 @@ $error: #ff4d6a;
   background: #f0f4ff;
   font-family: 'Plus Jakarta Sans', sans-serif;
   padding: 20px;
+  position: relative; // Required for the fixed HMSAlert toast
 
   .login-card-container {
     display: flex;
@@ -29,6 +31,7 @@ $error: #ff4d6a;
     @media (max-width: 900px) {
       flex-direction: column;
       height: auto;
+      border-radius: 24px;
     }
   }
 }
@@ -42,6 +45,11 @@ $error: #ff4d6a;
   justify-content: space-between;
   position: relative;
   color: white;
+
+  @media (max-width: 900px) {
+    padding: 30px;
+    min-height: 300px;
+  }
 
   .logo-header {
     display: flex;
@@ -57,7 +65,6 @@ $error: #ff4d6a;
     justify-content: center;
     position: relative;
 
-    // This creates the stylish nurse "cutout" look
     .nurse-circle {
       width: 320px;
       height: 320px;
@@ -68,14 +75,17 @@ $error: #ff4d6a;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 1.2rem;
       box-shadow: 0 20px 40px rgba(0,0,0,0.1);
       
-      // Temporary style if you don't have the image yet
       &::before {
         content: '👩‍⚕️';
         font-size: 8rem;
+      }
+
+      @media (max-width: 900px) {
+        width: 180px;
+        height: 180px;
+        &::before { font-size: 4rem; }
       }
     }
   }
@@ -92,6 +102,8 @@ $error: #ff4d6a;
   background: white;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 900px) { padding: 40px 30px; }
 
   .tabs-header {
     display: flex;
@@ -133,14 +145,9 @@ $error: #ff4d6a;
         border-bottom: 1.5px solid #e2e8f0;
         transition: 0.3s;
 
-        &:focus-within {
-          border-bottom-color: $primary;
-        }
+        &:focus-within { border-bottom-color: $primary; }
 
-        .input-icon {
-          color: #94a3b8;
-          margin-right: 12px;
-        }
+        .input-icon { color: #94a3b8; margin-right: 12px; }
 
         input {
           width: 100%;
@@ -150,7 +157,6 @@ $error: #ff4d6a;
           font-size: 1rem;
           color: $text-dark;
           background: transparent;
-
           &::placeholder { color: #cbd5e1; }
         }
 
@@ -169,7 +175,7 @@ $error: #ff4d6a;
 
   .signin-submit-btn {
     width: 100%;
-    padding: 16px;
+    height: 56px; // 🚀 FIXED HEIGHT: Prevents jumpy UI when spinner appears
     background: $primary;
     color: white;
     border: none;
@@ -178,13 +184,36 @@ $error: #ff4d6a;
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(79, 100, 255, 0.3);
-    transition: 0.3s;
+    transition: all 0.3s ease;
     margin-top: 10px;
+    
+    // Flexbox centering for the text and HMSLoader
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: $primary-light;
       transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(79, 100, 255, 0.4);
     }
+
+    &:active:not(:disabled) { transform: translateY(0); }
+
+    &:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    
+    // Ensure the MUI Loader inherits the white color
+    .MuiCircularProgress-root {
+      color: white !important;
+    }
+
+    div { animation: fadeIn 0.3s ease-in; }
   }
 
   .signup-link-text {
@@ -195,6 +224,7 @@ $error: #ff4d6a;
     font-weight: 700;
     text-decoration: none;
     font-size: 0.95rem;
+    &:hover { text-decoration: underline; }
   }
 
   .contact-footer-info {
@@ -211,8 +241,13 @@ $error: #ff4d6a;
       color: $text-gray;
       font-size: 0.85rem;
       font-weight: 500;
-      
       svg { color: $primary; }
     }
   }
+}
+
+// Global Animations
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }

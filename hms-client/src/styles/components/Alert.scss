@@ -1,0 +1,52 @@
+.hms-alert-wrapper {
+  width: 100%;
+  margin-bottom: 1rem;
+
+  .hms-custom-alert {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid transparent;
+
+    &.success {
+      background-color: #f0fdf4;
+      color: #16a34a;
+      border-color: #dcfce7;
+      .MuiAlert-icon { color: #16a34a; }
+    }
+
+    &.error {
+      background-color: #fff1f2;
+      color: #e11d48;
+      border-color: #ffe4e6;
+      .MuiAlert-icon { color: #e11d48; }
+    }
+
+    &.warning {
+      background-color: #fffbeb;
+      color: #d97706;
+      border-color: #fef3c7;
+      .MuiAlert-icon { color: #d97706; }
+    }
+
+    &.info {
+      background-color: #eff6ff;
+      color: #4f64ff;
+      border-color: #dbeafe;
+      .MuiAlert-icon { color: #4f64ff; }
+    }
+  }
+}
+
+.MuiAlert-filledError {
+  background-color: #ef4444 !important; // Stronger red
+  color: #fff !important;
+}
+
+.MuiAlert-filledSuccess {
+  background-color: #22c55e !important; // Stronger green
+  color: #fff !important;
+}
+
+// Ensure the alert slides in beautifully
+.MuiCollapse-root {
+  transition: all 0.3s ease-in-out;
+}
