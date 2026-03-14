@@ -1,0 +1,17 @@
+$primary-light: rgba(79, 100, 255, 0.1);
+
+.hms-skeleton-stack {
+  width: 100%;
+}
+
+.hms-custom-skeleton {
+  &.MuiSkeleton-wave::after {
+    // 🚀 Customizing the shimmer gradient to a soft blue
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(79, 100, 255, 0.08),
+      transparent
+    );
+  }
+}

@@ -14,14 +14,20 @@ const router = Router();
 /**
  * @route   POST /api/auth/login
  * @desc    Public login route
+ * @access  Public
  */
 router.post('/login', login);
 
 /**
  * @route   POST /api/auth/register
- * @desc    Create new staff/doctor accounts (Admin access recommended)
+ * @desc    Create new staff/doctor/admin accounts with avatar
+ * @access  Public
  */
-router.post('/register', register);
+router.post(
+  '/register', 
+  upload.single('avatar'), // 🚀 Key matched to frontend: data.append('avatar', ...)
+  register
+);
 
 /**
  * @route   GET /api/auth/profile
@@ -32,20 +38,20 @@ router.get('/profile', authenticateToken, getProfile);
 
 /**
  * @route   GET /api/auth/staff-list
- * @desc    Fetch all hospital employees for the Staff Management table
+ * @desc    Fetch all hospital employees
  * @access  Private
  */
 router.get('/staff-list', authenticateToken, getAllStaff);
 
 /**
  * @route   POST /api/auth/update-avatar
- * @desc    Upload profile picture to Cloudinary
+ * @desc    Update existing user profile picture
  * @access  Private
  */
 router.post(
   '/update-avatar', 
   authenticateToken, 
-  upload.single('image'), 
+  upload.single('avatar'), // 🚀 Changed from 'image' to 'avatar' for consistency
   updateProfileImage
 );
 

@@ -16,13 +16,14 @@ interface Option {
 }
 
 interface HMSSelectProps {
-  label: string;
+  label?: string; // 🚀 Changed to optional (?)
   value: string | number;
   onChange: (value: string) => void;
   options: Option[];
   minWidth?: number;
   fullWidth?: boolean;
   error?: string;
+  placeholder?: string;
 }
 
 const HMSSelect: React.FC<HMSSelectProps> = ({ 
@@ -32,12 +33,16 @@ const HMSSelect: React.FC<HMSSelectProps> = ({
   options, 
   minWidth = 120, 
   fullWidth = false,
-  error
+  error,
+  placeholder
 }) => {
   
   const handleChange = (event: SelectChangeEvent<string | number>) => {
-    onChange(event.target.value.toString());
+    onChange(event.target.value as string);
   };
+
+  // Generate a unique ID fallback if no label is provided
+  const selectId = label ? `hms-select-${label.replace(/\s+/g, '-').toLowerCase()}` : 'hms-select-custom';
 
   return (
     <FormControl 
@@ -46,32 +51,32 @@ const HMSSelect: React.FC<HMSSelectProps> = ({
       fullWidth={fullWidth}
       error={!!error}
     >
-      <InputLabel id={`hms-select-label-${label}`}>{label}</InputLabel>
+      {/* 🚀 Only render InputLabel if label prop exists */}
+      {label && <InputLabel id={`${selectId}-label`}>{label}</InputLabel>}
+      
       <Select
-        labelId={`hms-select-label-${label}`}
-        id={`hms-select-${label}`}
+        labelId={label ? `${selectId}-label` : undefined}
+        id={selectId}
         value={value}
         onChange={handleChange}
-        label={label}
+        label={label} // MUI uses this for the notched outline gap
         className="hms-custom-select"
         IconComponent={() => <ChevronDown size={18} className="select-icon" />}
-        // 🚀 THE FIX: MenuProps configuration
+        displayEmpty
         MenuProps={{
-          disableScrollLock: true,
           PaperProps: {
-            className: "hms-dropdown-portal", // Target this in SCSS
+            className: "hms-dropdown-menu-paper",
           },
-          // Ensures the menu opens directly below the input
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'left',
-          },
-          transformOrigin: {
-            vertical: 'top',
-            horizontal: 'left',
-          },
+          disableScrollLock: true,
+          anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+          transformOrigin: { vertical: 'top', horizontal: 'left' },
         }}
       >
+        {placeholder && (
+          <MenuItem value="" disabled>
+            <em>{placeholder}</em>
+          </MenuItem>
+        )}
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value} className="hms-menu-item">
             {option.label}

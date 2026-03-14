@@ -1,0 +1,62 @@
+$primary: #4f64ff;
+$border-color: #e2e8f0;
+
+.hms-datepicker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .hms-input-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  // Target the MUI TextField specifically
+  .hms-custom-datepicker-input {
+    .MuiInputBase-root {
+      background: white;
+      border-radius: 16px !important;
+      font-family: 'Inter', sans-serif;
+      transition: 0.3s;
+      
+      fieldset {
+        border: 1.5px solid $border-color !important;
+        border-radius: 16px;
+      }
+
+      &:hover fieldset {
+        border-color: #cbd5e1 !important;
+      }
+
+      &.Mui-focused fieldset {
+        border-color: $primary !important;
+        border-width: 1.5px !important;
+        box-shadow: 0 0 0 4px rgba(79, 100, 255, 0.1);
+      }
+
+      .picker-icon {
+        margin-right: 12px;
+        color: #94a3b8;
+      }
+    }
+  }
+}
+
+// Global Override for the Calendar Popup
+.hms-calendar-popper {
+  .MuiPaper-root {
+    border-radius: 20px !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+    border: 1px solid #f1f5f9;
+    margin-top: 10px;
+  }
+  
+  .MuiPickersDay-root.Mui-selected {
+    background-color: $primary !important;
+    &:hover { background-color: darken($primary, 10%); }
+  }
+}

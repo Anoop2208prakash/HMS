@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { X, User, Mail, Lock, Camera} from 'lucide-react';
+import { X, User, Mail, Lock, Camera, Stethoscope } from 'lucide-react';
 import axios from 'axios';
 import HMSSelect from '../../components/common/HMSSelect';
 import HMSAlert from '../../components/common/HMSAlert';
 import HMSLoader from '../../components/common/HMSLoader';
 import '../../styles/pages/admin/AddStaffModal.scss';
-
-// Configuration
-const CLOUDINARY_UPLOAD_PRESET = "hms_profiles"; 
-const CLOUDINARY_CLOUD_NAME = "your_cloud_name"; 
 
 interface AddStaffModalProps {
   isOpen: boolean;
@@ -18,7 +14,7 @@ interface AddStaffModalProps {
 
 const AddStaffModal: React.FC<AddStaffModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null); // Store the actual file
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [alert, setAlert] = useState<{ show: boolean; msg: string; type: 'success' | 'error' }>({
     show: false, msg: '', type: 'success'
@@ -29,11 +25,11 @@ const AddStaffModal: React.FC<AddStaffModalProps> = ({ isOpen, onClose, onSucces
     email: '',
     password: '',
     role: 'STAFF',
+    department: '', // 🚀 New field for Doctors
   });
 
   if (!isOpen) return null;
 
-  // 1. Just handle the local preview
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -42,40 +38,43 @@ const AddStaffModal: React.FC<AddStaffModalProps> = ({ isOpen, onClose, onSucces
     }
   };
 
-  // 2. The combined upload + submit function
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    let avatarUrl = "";
 
     try {
-      // Step A: Upload to Cloudinary first if a file was selected
-      if (selectedFile) {
-        const data = new FormData();
-        data.append("file", selectedFile);
-        data.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-
-        const cloudinaryRes = await axios.post(
-          `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-          data
-        );
-        avatarUrl = cloudinaryRes.data.secure_url;
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('email', formData.email);
+      data.append('password', formData.password);
+      data.append('role', formData.role);
+      
+      // 🚀 Only send department if the user is a Doctor
+      if (formData.role === 'DOCTOR') {
+        data.append('department', formData.department);
       }
 
-      // Step B: Send everything to your backend
-      const finalData = { ...formData, avatar: avatarUrl };
-      await axios.post("http://localhost:5000/api/auth/register", finalData);
+      if (selectedFile) {
+        data.append('avatar', selectedFile);
+      }
+
+      await axios.post("http://localhost:5000/api/auth/register", data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
 
       setAlert({ show: true, msg: "Staff account created successfully!", type: "success" });
-      setTimeout(() => { onSuccess(); onClose(); }, 1500);
+      
+      setTimeout(() => { 
+        onSuccess(); 
+        onClose(); 
+        setPreview(null);
+        setSelectedFile(null);
+        setFormData({ name: '', email: '', password: '', role: 'STAFF', department: '' });
+      }, 1500);
 
     } catch (error: any) {
-      console.error("Submission Error:", error);
-      setAlert({ 
-        show: true, 
-        msg: error.response?.data?.message || "Failed to create account. Check connection.", 
-        type: "error" 
-      });
+      const errorMsg = error.response?.data?.message || "Failed to create account.";
+      setAlert({ show: true, msg: errorMsg, type: "error" });
     } finally {
       setLoading(false);
     }
@@ -83,7 +82,12 @@ const AddStaffModal: React.FC<AddStaffModalProps> = ({ isOpen, onClose, onSucces
 
   return (
     <div className="modal-overlay">
-      <HMSAlert severity={alert.type} isOpen={alert.show} message={alert.msg} onClose={() => setAlert({ ...alert, show: false })} />
+      <HMSAlert 
+        severity={alert.type} 
+        isOpen={alert.show} 
+        message={alert.msg} 
+        onClose={() => setAlert({ ...alert, show: false })} 
+      />
 
       <div className="modal-content">
         <div className="modal-header">
@@ -108,22 +112,40 @@ const AddStaffModal: React.FC<AddStaffModalProps> = ({ isOpen, onClose, onSucces
           <div className="form-grid">
             <div className="form-group">
               <label><User size={16} /> Full Name</label>
-              <input type="text" placeholder="Anoop Prakash" required onChange={(e) => setFormData({...formData, name: e.target.value})} />
+              <input 
+                type="text" 
+                placeholder="e.g. Nayanthara" 
+                required 
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})} 
+              />
             </div>
 
             <div className="form-group">
               <label><Mail size={16} /> Email Address</label>
-              <input type="email" placeholder="anoop@hms.com" required onChange={(e) => setFormData({...formData, email: e.target.value})} />
+              <input 
+                type="email" 
+                placeholder="doctor1@hospital.com" 
+                required 
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})} 
+              />
             </div>
 
             <div className="form-group">
               <label><Lock size={16} /> Temporary Password</label>
-              <input type="password" placeholder="••••••••" required onChange={(e) => setFormData({...formData, password: e.target.value})} />
+              <input 
+                type="password" 
+                placeholder="••••••••" 
+                required 
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})} 
+              />
             </div>
 
             <div className="form-group">
-              <HMSSelect 
-                label="Select Role" 
+               <label><Lock size={16} /> Select Role</label>
+              <HMSSelect
                 value={formData.role} 
                 onChange={(val) => setFormData((prev) => ({ ...prev, role: val }))} 
                 options={[
@@ -134,6 +156,20 @@ const AddStaffModal: React.FC<AddStaffModalProps> = ({ isOpen, onClose, onSucces
                 fullWidth 
               />
             </div>
+
+            {/* 🚀 CONDITIONAL DEPARTMENT FIELD */}
+            {formData.role === 'DOCTOR' && (
+              <div className="form-group animate-slide-down">
+                <label><Stethoscope size={16} /> Medical Department</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Cardiology, Neurology" 
+                  required 
+                  value={formData.department}
+                  onChange={(e) => setFormData({...formData, department: e.target.value})} 
+                />
+              </div>
+            )}
           </div>
 
           <div className="modal-footer">

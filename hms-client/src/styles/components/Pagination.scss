@@ -1,0 +1,39 @@
+$primary: #4f64ff;
+$bg-glass: rgba(255, 255, 255, 0.7);
+
+.hms-pagination-wrapper {
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  .hms-custom-pagination {
+    .MuiPaginationItem-root {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      border-radius: 12px; // Rounded like your inputs
+      transition: all 0.3s ease;
+      color: #64748b;
+
+      &:hover {
+        background-color: rgba(79, 100, 255, 0.08);
+        color: $primary;
+      }
+
+      &.Mui-selected {
+        background-color: $primary !important;
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 100, 255, 0.3);
+        
+        &:hover {
+          background-color: darken($primary, 5%) !important;
+        }
+      }
+
+      // First/Last/Prev/Next icons
+      .MuiPaginationItem-icon {
+        color: inherit;
+      }
+    }
+  }
+}

@@ -5,12 +5,18 @@ import jwt from 'jsonwebtoken';
 
 /**
  * @route   POST /api/auth/register
- * @desc    Create a new staff/doctor/admin account
+ * @desc    Unified Registration for Staff, Doctors, and Patients
  */
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password, role } = req.body;
-
   try {
+    const { 
+      name, email, password, role, phone, address, 
+      // Patient specific
+      dob, gender, bloodType,
+      // Doctor specific
+      specialization, department 
+    } = req.body;
+
     // 1. Check if user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -21,46 +27,77 @@ export const register = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // 3. Create the user in MongoDB
+    // 3. Get the Cloudinary URL from Multer
+    const avatarUrl = req.file ? req.file.path : "";
+
+    // 4. Create User with Nested Profile Logic
     const newUser = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        role: role, // Expects 'ADMIN', 'DOCTOR', or 'STAFF'
+        role: role || 'PATIENT',
+        avatar: avatarUrl,
+        phone,
+        address,
+        // 🚀 Nested Write for Patient
+        ...(role === 'PATIENT' && {
+          patientProfile: {
+            create: {
+              dob: dob ? new Date(dob) : new Date(), // Convert string to Date object
+              gender: gender || 'Other',
+              bloodType: bloodType || null
+            }
+          }
+        }),
+        // 🚀 Nested Write for Doctor
+        ...(role === 'DOCTOR' && {
+          doctorProfile: {
+            create: {
+              specialization: specialization || "General Medicine",
+              department: department || "General" 
+            }
+          }
+        })
+      },
+      include: {
+        patientProfile: true,
+        doctorProfile: true
       }
     });
 
-    // 4. If the role is DOCTOR, initialize an empty Doctor profile
-    if (role === 'DOCTOR') {
-      await prisma.doctor.create({
-        data: {
-          userId: newUser.id,
-          specialization: "General Medicine",
-        }
-      });
-    }
+    // 🚀 FIXED: Variable name here must match the return statement below
+    const { password: _, ...userWithoutPassword } = newUser;
 
     return res.status(201).json({
       message: "Registration successful!",
-      user: { id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role }
+      user: userWithoutPassword // 🚀 This was 'userResponse' in your error
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Registration Error:", error);
-    return res.status(500).json({ message: "Internal Server Error during registration." });
+    return res.status(500).json({ 
+      message: "Internal Server Error during registration.",
+      error: error.message 
+    });
   }
 };
 
 /**
  * @route   POST /api/auth/login
- * @desc    Authenticate user & get token
+ * @desc    Authenticate user & get token (Includes sub-profiles)
  */
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+      where: { email },
+      include: { 
+        patientProfile: true, 
+        doctorProfile: true 
+      }
+    });
 
     if (!user) {
       return res.status(404).json({ message: "Invalid email or user does not exist." });
@@ -93,7 +130,7 @@ export const login = async (req: Request, res: Response) => {
 
 /**
  * @route   GET /api/auth/profile
- * @desc    Get current user profile from token
+ * @desc    Get current user profile (Includes specific role data)
  */
 export const getProfile = async (req: Request, res: Response) => {
   try {
@@ -101,19 +138,16 @@ export const getProfile = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        avatar: true,
-        createdAt: true,
+      include: {
+        patientProfile: true,
+        doctorProfile: true
       }
     });
 
     if (!user) return res.status(404).json({ message: "User profile not found." });
 
-    return res.status(200).json(user);
+    const { password: _, ...userWithoutPassword } = user;
+    return res.status(200).json(userWithoutPassword);
   } catch (error) {
     console.error("Profile Fetch Error:", error);
     return res.status(500).json({ message: "Could not retrieve user profile." });
@@ -122,7 +156,7 @@ export const getProfile = async (req: Request, res: Response) => {
 
 /**
  * @route   GET /api/auth/staff-list
- * @desc    Fetch all hospital employees (Excludes regular patients)
+ * @desc    Fetch all hospital employees
  */
 export const getAllStaff = async (req: Request, res: Response) => {
   try {
@@ -130,13 +164,10 @@ export const getAllStaff = async (req: Request, res: Response) => {
       where: {
         role: { in: ['ADMIN', 'DOCTOR', 'STAFF'] } 
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        avatar: true,
-        createdAt: true
+      include: {
+        doctorProfile: {
+          select: { department: true, specialization: true }
+        }
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -149,7 +180,7 @@ export const getAllStaff = async (req: Request, res: Response) => {
 
 /**
  * @route   POST /api/auth/update-avatar
- * @desc    Update user profile picture via Cloudinary
+ * @desc    Update user profile picture via Multer
  */
 export const updateProfileImage = async (req: Request, res: Response) => {
   try {

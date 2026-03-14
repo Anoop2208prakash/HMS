@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 🔐 Core User Model for Login
+// 🔐 Core User Model
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -15,17 +15,17 @@ model User {
   password  String   // Hashed password
   role      Role     @default(PATIENT)
   
-  // 📸 Added for Cloudinary Integration
-  avatar    String?  // The URL returned from Cloudinary
+  // 📸 Cloudinary Integration
+  avatar    String?  @default("")
   
-  // 📞 Additional Contact Info
+  // 📞 Shared Contact Info
   phone     String?
   address   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations to specific profiles
+  // Relations
   doctorProfile  Doctor?
   patientProfile Patient?
 }
@@ -34,13 +34,14 @@ enum Role {
   ADMIN
   DOCTOR
   PATIENT
-  STAFF   // Added STAFF role for general lab/hospital employees
+  STAFF   
 }
 
 // 🩺 Doctor Specific Data
 model Doctor {
   id             String @id @default(auto()) @map("_id") @db.ObjectId
   specialization String
+  department     String @default("General Medicine") // 🚀 Added for your "Dept" requirement
   experience     Int    @default(0)
   bio            String?
   
@@ -53,7 +54,7 @@ model Doctor {
 // 👤 Patient Specific Data
 model Patient {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  age       Int
+  dob       DateTime // 🚀 Changed from age to dob for better record keeping
   gender    String
   bloodType String?
   
@@ -68,7 +69,7 @@ model Patient {
 model Appointment {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   date      DateTime
-  reason    String?  // Added to know why the patient is visiting
+  reason    String?  
   status    String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
   
   patientId String   @db.ObjectId

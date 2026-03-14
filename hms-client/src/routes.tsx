@@ -2,14 +2,20 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import Login from "./features/auth/Login";
 import DashboardHome from "./pages/DashboardHome";
-import StaffList from "./pages/admin/StaffList"; // 1. Import your new Staff List page
+import StaffList from "./pages/admin/StaffList";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PatientRegister from "./features/auth/PatientRegister";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
+  },
+  {
+    // 🚀 Public route for new patients to sign up
+    path: "/register",
+    element: <PatientRegister />,
   },
   {
     path: "/dashboard",
@@ -20,20 +26,25 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
-        index: true, // This is /dashboard
+        index: true, 
         element: <DashboardHome />,
       },
       {
-        path: "staff", // This is /dashboard/staff
+        path: "staff", 
         element: <StaffList />,
       },
       {
-        path: "patients", // Placeholder for next step
-        element: <div style={{ padding: '20px' }}><h2>Patients Module (Coming Soon)</h2></div>,
+        path: "patients", 
+        // 🚀 You can eventually replace this div with a <PatientList /> component
+        element: <div style={{ padding: '20px' }}><h2>Patient Management</h2></div>,
       },
       {
         path: "appointments",
-        element: <div style={{ padding: '20px' }}><h2>Appointments Module (Coming Soon)</h2></div>,
+        element: <div style={{ padding: '20px' }}><h2>Appointments & Scheduling</h2></div>,
+      },
+      {
+        path: "profile",
+        element: <div style={{ padding: '20px' }}><h2>My Profile Settings</h2></div>,
       },
     ],
   },

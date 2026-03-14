@@ -1,253 +1,113 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-// Variables
 $primary: #4f64ff;
-$primary-light: #7a8cff;
-$bg-gradient: linear-gradient(135deg, #2b3bfe 0%, #5973fe 100%);
-$text-dark: #1e293b;
-$text-gray: #64748b;
-$error: #ff4d6a;
+$bg-dark: #0f172a;
+$glass-bg: rgba(255, 255, 255, 0.8);
 
-.login-wrapper {
+.modern-login-container {
   min-height: 100vh;
+  background: $bg-dark;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0f4ff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  padding: 20px;
-  position: relative; // Required for the fixed HMSAlert toast
-
-  .login-card-container {
-    display: flex;
-    width: 100%;
-    max-width: 1050px;
-    height: 650px;
-    background: #fff;
-    border-radius: 40px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-
-    @media (max-width: 900px) {
-      flex-direction: column;
-      height: auto;
-      border-radius: 24px;
-    }
-  }
-}
-
-.login-branding-panel {
-  flex: 1.1;
-  background: $bg-gradient;
-  padding: 50px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   position: relative;
-  color: white;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
 
-  @media (max-width: 900px) {
-    padding: 30px;
-    min-height: 300px;
+  .mesh-gradient {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(at 0% 0%, rgba(79, 100, 255, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
   }
 
-  .logo-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+  .floating-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+    opacity: 0.5;
+    animation: move 20s infinite alternate;
   }
 
-  .graphic-overlay {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .blob-1 { width: 400px; height: 400px; background: $primary; top: -10%; right: -5%; }
+  .blob-2 { width: 300px; height: 300px; background: #8b5cf6; bottom: -5%; left: -5%; }
+
+  .glass-login-card {
     position: relative;
-
-    .nurse-circle {
-      width: 320px;
-      height: 320px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      
-      &::before {
-        content: '👩‍⚕️';
-        font-size: 8rem;
-      }
-
-      @media (max-width: 900px) {
-        width: 180px;
-        height: 180px;
-        &::before { font-size: 4rem; }
-      }
-    }
-  }
-
-  .copyright-text {
-    font-size: 0.8rem;
-    opacity: 0.7;
-  }
-}
-
-.login-form-panel {
-  flex: 1;
-  padding: 60px;
-  background: white;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 900px) { padding: 40px 30px; }
-
-  .tabs-header {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 45px;
-
-    .tab-btn {
-      background: none;
-      border: none;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #cbd5e1;
-      cursor: pointer;
-      padding-bottom: 8px;
-      transition: 0.3s;
-
-      &.active {
-        color: $text-dark;
-        border-bottom: 3px solid $primary;
-      }
-    }
-  }
-
-  .login-form {
-    .form-group {
-      margin-bottom: 30px;
-      label {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: $primary;
-        display: block;
-        margin-bottom: 8px;
-      }
-
-      .input-container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        border-bottom: 1.5px solid #e2e8f0;
-        transition: 0.3s;
-
-        &:focus-within { border-bottom-color: $primary; }
-
-        .input-icon { color: #94a3b8; margin-right: 12px; }
-
-        input {
-          width: 100%;
-          padding: 12px 0;
-          border: none;
-          outline: none;
-          font-size: 1rem;
-          color: $text-dark;
-          background: transparent;
-          &::placeholder { color: #cbd5e1; }
-        }
-
-        .show-pass-btn {
-          background: #f1f5f9;
-          border: none;
-          padding: 6px;
-          border-radius: 8px;
-          cursor: pointer;
-          color: $text-gray;
-          &:hover { color: $primary; }
-        }
-      }
-    }
-  }
-
-  .signin-submit-btn {
+    z-index: 10;
     width: 100%;
-    height: 56px; // 🚀 FIXED HEIGHT: Prevents jumpy UI when spinner appears
-    background: $primary;
-    color: white;
-    border: none;
-    border-radius: 14px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 10px 20px rgba(79, 100, 255, 0.3);
-    transition: all 0.3s ease;
-    margin-top: 10px;
-    
-    // Flexbox centering for the text and HMSLoader
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
+    max-width: 440px;
+    background: $glass-bg;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 3rem;
+    border-radius: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 
-    &:hover:not(:disabled) {
-      background: $primary-light;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(79, 100, 255, 0.4);
+    .login-intro {
+      text-align: center;
+      margin-bottom: 2rem;
+      .brand-logo { 
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        margin-bottom: 1rem;
+        span { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; color: $bg-dark; }
+      }
+      h2 { font-size: 1.8rem; font-weight: 800; color: $bg-dark; margin-bottom: 0.5rem; }
+      p { color: #64748b; font-size: 0.95rem; }
     }
-
-    &:active:not(:disabled) { transform: translateY(0); }
-
-    &:disabled {
-      background: #94a3b8;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
-    }
-    
-    // Ensure the MUI Loader inherits the white color
-    .MuiCircularProgress-root {
-      color: white !important;
-    }
-
-    div { animation: fadeIn 0.3s ease-in; }
   }
 
-  .signup-link-text {
-    text-align: center;
-    display: block;
-    margin-top: 25px;
-    color: $error;
-    font-weight: 700;
-    text-decoration: none;
-    font-size: 0.95rem;
-    &:hover { text-decoration: underline; }
+  .modern-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .input-field {
+      position: relative;
+      input {
+        width: 100%; padding: 1rem 1rem 1rem 3.2rem;
+        background: white; border: 1.5px solid #e2e8f0;
+        border-radius: 16px; font-size: 1rem; transition: 0.3s;
+        &:focus { border-color: $primary; box-shadow: 0 0 0 4px rgba(79, 100, 255, 0.1); outline: none; }
+      }
+      .field-icon { position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+      .toggle-pass { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); border: none; background: none; color: #94a3b8; cursor: pointer; }
+    }
   }
 
-  .contact-footer-info {
-    margin-top: auto;
-    padding-top: 40px;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: $text-gray;
-      font-size: 0.85rem;
-      font-weight: 500;
-      svg { color: $primary; }
-    }
+  .form-options {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.85rem; font-weight: 600;
+    .remember-me { display: flex; align-items: center; gap: 8px; color: #64748b; cursor: pointer; }
+    a { color: $primary; text-decoration: none; &:hover { text-decoration: underline; } }
+  }
+
+  .glow-btn {
+    width: 100%; padding: 1rem; background: $primary; color: white;
+    border: none; border-radius: 16px; font-size: 1rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    cursor: pointer; transition: 0.3s;
+    box-shadow: 0 10px 15px -3px rgba(79, 100, 255, 0.4);
+    &:hover { transform: translateY(-2px); box-shadow: 0 20px 25px -5px rgba(79, 100, 255, 0.4); }
+  }
+
+  .login-divider {
+    text-align: center; margin: 2rem 0; position: relative;
+    &::before { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: #e2e8f0; z-index: 1; }
+    span { position: relative; z-index: 2; background: white; padding: 0 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 800; border-radius: 10px; }
+  }
+
+  .signup-prompt {
+    text-align: center; font-size: 0.9rem; color: #64748b;
+    .register-text { color: $primary; font-weight: 700; margin-left: 5px; text-decoration: none; }
+  }
+
+  .trust-badge {
+    margin-top: 2rem; display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-size: 0.75rem; color: #94a3b8; font-weight: 600;
   }
 }
 
-// Global Animations
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+@keyframes move {
+  from { transform: translate(0, 0); }
+  to { transform: translate(20px, 40px); }
 }
