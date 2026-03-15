@@ -1,58 +1,66 @@
-$primary-blue: #4f64ff;
+$primary: #4f64ff;
 $bg-white: #ffffff;
 $text-dark: #1e293b;
-$text-muted: #94a3b8;
-$hover-bg: #eff6ff;
+$text-muted: #64748b;
+$hover-bg: #f8faff;
+$shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
 
 .hms-sidebar {
   width: 280px;
   height: 100vh;
   background: $bg-white;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
   position: fixed;
   left: 0;
   top: 0;
   z-index: 1100;
+  transition: 0.3s;
 
   .sidebar-brand {
-    padding: 2.5rem 2rem;
+    padding: 2.5rem 1.5rem;
     display: flex;
     align-items: center;
     gap: 12px;
 
     .brand-logo {
-      background: linear-gradient(135deg, #2b3bfe, #5973fe);
+      background: linear-gradient(135deg, $primary, #8b5cf6);
       padding: 10px;
       border-radius: 12px;
       color: white;
-      box-shadow: 0 8px 16px rgba(43, 59, 254, 0.2);
+      box-shadow: 0 10px 20px rgba(79, 100, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .brand-name {
-      font-size: 1.4rem;
-      font-weight: 800;
+      font-size: 1.5rem;
+      font-weight: 900;
       color: $text-dark;
-      letter-spacing: -0.5px;
-      span { color: $primary-blue; }
+      letter-spacing: -1.5px;
+      span { color: $primary; }
     }
   }
 
   .sidebar-menu {
     flex: 1;
-    padding: 0 1.25rem;
+    padding: 0 1rem;
     overflow-y: auto;
 
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
     .menu-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: $text-muted;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #94a3b8;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin: 1.5rem 0 0.75rem 0.75rem;
+      letter-spacing: 1px;
+      margin: 2rem 0 1rem 1rem;
       
-      &.secondary { margin-top: 2.5rem; }
+      &.secondary { margin-top: 3rem; }
     }
 
     .menu-list {
@@ -60,40 +68,43 @@ $hover-bg: #eff6ff;
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
 
       .menu-item {
         display: flex;
         align-items: center;
         gap: 14px;
-        padding: 0.85rem 1rem;
-        border-radius: 14px;
+        padding: 0.9rem 1.25rem;
+        border-radius: 18px; // 🚀 Matches Dashboard Cards
         text-decoration: none;
-        color: #64748b;
-        font-weight: 600;
-        transition: 0.3s;
+        color: $text-muted;
+        font-weight: 700;
+        font-size: 0.95rem;
+        transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         border: none;
         background: none;
         width: 100%;
         text-align: left;
         cursor: pointer;
 
-        .icon { display: flex; align-items: center; }
+        .icon { display: flex; align-items: center; opacity: 0.7; }
 
         &:hover {
-          color: $primary-blue;
+          color: $primary;
           background: $hover-bg;
+          .icon { opacity: 1; }
         }
 
         &.active {
-          background: $primary-blue;
+          background: $primary;
           color: white;
-          box-shadow: 0 10px 15px -3px rgba(79, 100, 255, 0.3);
+          box-shadow: 0 12px 20px -5px rgba(79, 100, 255, 0.4);
+          .icon { opacity: 1; }
         }
 
         &.logout-btn:hover {
           background: #fff1f2;
-          color: #ff4d6a;
+          color: #e11d48;
         }
       }
     }
@@ -101,32 +112,47 @@ $hover-bg: #eff6ff;
 
   .sidebar-footer {
     padding: 1.5rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #f8fafc;
 
     .user-mini-card {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       background: #f8fafc;
-      padding: 0.75rem;
-      border-radius: 14px;
+      padding: 1rem;
+      border-radius: 20px;
+      border: 1px solid #f1f5f9;
+      transition: 0.3s;
 
-      .avatar {
-        width: 38px;
-        height: 38px;
-        background: #e2e8f0;
-        color: $text-dark;
-        font-weight: 700;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
+      &:hover { border-color: $primary; background: white; box-shadow: $shadow-sm; }
+
+      .avatar-wrapper {
+        position: relative;
+        .avatar-img, .avatar-fallback {
+          width: 44px; height: 44px;
+          border-radius: 14px;
+          object-fit: cover;
+        }
+        .avatar-fallback {
+          background: #eef2ff;
+          color: $primary;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .online-status {
+          position: absolute; bottom: -2px; right: -2px;
+          width: 12px; height: 12px;
+          background: #16a34a;
+          border: 3px solid #f8fafc;
+          border-radius: 50%;
+        }
       }
 
       .details {
-        .name { font-size: 0.85rem; font-weight: 700; color: $text-dark; line-height: 1; }
-        .status { font-size: 0.7rem; color: #22c55e; font-weight: 600; margin-top: 2px; }
+        .name { font-size: 0.9rem; font-weight: 800; color: $text-dark; line-height: 1.2; }
+        .role { font-size: 0.75rem; color: $text-muted; font-weight: 600; text-transform: capitalize; margin-top: 2px; }
       }
     }
   }

@@ -6,6 +6,7 @@ import StaffList from "./pages/admin/StaffList";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PatientRegister from "./features/auth/PatientRegister";
+import PatientList from "./pages/admin/PatientList";
 
 export const router = createBrowserRouter([
   {
@@ -36,7 +37,7 @@ export const router = createBrowserRouter([
       {
         path: "patients", 
         // 🚀 You can eventually replace this div with a <PatientList /> component
-        element: <div style={{ padding: '20px' }}><h2>Patient Management</h2></div>,
+        element: <PatientList />,
       },
       {
         path: "appointments",

@@ -1,8 +1,10 @@
 import React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef, GridPaginationModel, GridValidRowModel } from '@mui/x-data-grid';
-import { Paper, Box, Typography } from '@mui/material';
+import { Paper, Box, Typography, type SxProps } from '@mui/material';
+// 🚀 Import SxProps and Theme for TypeScript safety
 import '../../styles/components/Table.scss';
+import type { Theme } from '@emotion/react';
 
 interface HMSTableProps {
   title?: string;
@@ -11,8 +13,9 @@ interface HMSTableProps {
   loading?: boolean;
   pageSize?: number;
   checkboxSelection?: boolean;
-  // 🚀 ADD THIS LINE:
   rowHeight?: number; 
+  // 🚀 ADD THIS: Allows passing custom MUI styles
+  sx?: SxProps<Theme>; 
 }
 
 const HMSTable: React.FC<HMSTableProps> = ({ 
@@ -22,8 +25,8 @@ const HMSTable: React.FC<HMSTableProps> = ({
   loading = false, 
   pageSize = 5,
   checkboxSelection = false,
-  // 🚀 ADD THIS LINE:
-  rowHeight = 52 
+  rowHeight = 52,
+  sx // 🚀 Destructure the new prop
 }) => {
   const paginationModel: GridPaginationModel = { page: 0, pageSize };
 
@@ -37,7 +40,6 @@ const HMSTable: React.FC<HMSTableProps> = ({
           rows={rows}
           columns={columns}
           loading={loading}
-          // 🚀 PASS THE PROP DOWN TO THE MUI DATAGRID:
           rowHeight={rowHeight} 
           initialState={{ 
             pagination: { paginationModel } 
@@ -47,6 +49,7 @@ const HMSTable: React.FC<HMSTableProps> = ({
           disableRowSelectionOnClick
           autoHeight
           className="hms-data-grid"
+          // 🚀 FIX: Merge default styles with the passed 'sx' prop
           sx={{
             border: 0,
             '& .MuiDataGrid-columnHeaders': {
@@ -54,6 +57,7 @@ const HMSTable: React.FC<HMSTableProps> = ({
               borderBottom: '1px solid #e2e8f0',
             },
             '& .MuiDataGrid-cell:focus': { outline: 'none' },
+            ...sx // Apply custom styles here
           }}
         />
       </Paper>

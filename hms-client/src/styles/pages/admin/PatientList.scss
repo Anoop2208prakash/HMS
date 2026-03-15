@@ -1,0 +1,325 @@
+// Variables
+$primary: #4f64ff;
+$bg-body: #f8fafc;
+$bg-white: #ffffff;
+$text-dark: #1e293b;
+$text-muted: #64748b;
+$border-soft: #f1f5f9;
+$border-base: #e2e8f0;
+$shadow-premium: 0 20px 60px rgba(0, 0, 0, 0.03);
+
+.patient-page-container {
+  padding: 2.5rem;
+  animation: pageSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Header Section
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+
+    .header-titles {
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: $text-dark;
+        letter-spacing: -1.5px;
+      }
+      p {
+        color: $text-muted;
+        font-weight: 500;
+        margin-top: 4px;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 15px;
+    }
+  }
+
+  // Search & Filter Controls (UPDATED)
+  .table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 20px;
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 450px;
+
+      .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.9rem 1rem 0.9rem 3.5rem;
+        background: $bg-white;
+        border: 1.5px solid $border-base;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        color: $text-dark;
+        transition: all 0.3s ease;
+
+        &::placeholder { color: #94a3b8; }
+        &:focus {
+          outline: none;
+          border-color: $primary;
+          box-shadow: 0 0 0 4px rgba($primary, 0.1);
+        }
+      }
+    }
+
+    // 🚀 FILTER BUTTON ADDED
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px;
+      height: 52px; // Match input height
+      background: $bg-white;
+      border: 1.5px solid $border-base;
+      border-radius: 20px;
+      color: $text-dark;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+
+      &:hover {
+        background: #f8faff;
+        color: $primary;
+        border-color: $primary;
+      }
+    }
+  }
+
+  // Table Section
+  .table-section-card {
+    background: $bg-white;
+    border-radius: 32px;
+    border: 1px solid $border-soft;
+    box-shadow: $shadow-premium;
+    overflow: hidden;
+
+    .MuiDataGrid-root {
+      border: none !important;
+      font-family: 'Inter', sans-serif;
+
+      .MuiDataGrid-cell {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px !important;
+        white-space: normal;
+        line-height: 1.3;
+      }
+
+      .MuiDataGrid-columnHeaders {
+        background-color: #fcfdfe;
+        border-bottom: 1px solid $border-soft;
+
+        .MuiDataGrid-columnHeaderTitle {
+          font-weight: 800;
+          color: #94a3b8;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+
+    .pagination-footer {
+      padding: 1rem;
+      border-top: 1px solid $border-soft;
+      display: flex;
+      justify-content: center;
+      background: #fafbfc;
+    }
+  }
+
+  // Patient Info Cell
+  .user-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+
+    .user-avatar, .user-avatar-img {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .user-avatar {
+      background: #eff6ff;
+      color: $primary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+
+      .user-name {
+        font-weight: 800;
+        color: $text-dark;
+        font-size: 0.95rem;
+        line-height: 1.2;
+        margin: 0;
+      }
+
+      .user-id {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1;
+      }
+    }
+  }
+
+  // Patient Vitals Section
+  .vitals-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+
+    .status-vitals {
+      font-size: 0.75rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      &.normal { color: #16a34a; }
+      &.warning { color: #f59e0b; }
+      &.critical { color: #dc2626; }
+    }
+
+    .vitals-type {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: $text-muted;
+      text-transform: uppercase;
+    }
+  }
+
+  // Blood Group
+  .blood-block-v {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    .blood-badge-v {
+      font-weight: 900;
+      color: #dc2626;
+      font-size: 0.85rem;
+      background: #fef2f2;
+      padding: 6px 12px;
+      border-radius: 10px;
+    }
+  }
+
+  // Contact Info
+  .contact-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: $text-muted;
+      font-weight: 500;
+      svg { color: #94a3b8; }
+    }
+  }
+
+  // Visit Badge
+  .status-tag.active {
+    background: #f0fdf4;
+    color: #16a34a;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  // Action Button
+  .action-dot-btn {
+    border: none;
+    background: #f1f5f9;
+    color: #94a3b8;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: #e2e8f0;
+      color: $text-dark;
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Global UI Buttons
+.btn-primary {
+  background: $primary;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 10px 20px rgba($primary, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+  &:hover { background: darken($primary, 8%); transform: translateY(-2px); }
+}
+
+.btn-secondary {
+  background: white;
+  border: 1.5px solid $border-base;
+  color: $text-dark;
+  padding: 0.8rem 1.8rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+  &:hover { background: #f8fafc; border-color: #cbd5e1; }
+}
+
+@keyframes pageSlideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

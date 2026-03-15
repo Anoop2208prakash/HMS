@@ -11,15 +11,21 @@ import {
   Settings, 
   LogOut,
   Heart,
-  ShieldUser // Icon for Staff
+  ShieldUser 
 } from 'lucide-react';
 import '../styles/layouts/Sidebar.scss';
 
-const Sidebar = () => {
-  const [user, setUser] = useState<{ name: string; avatar?: string } | null>(null);
+// 🚀 Added explicit Interface for Type Safety
+interface UserProfile {
+  name: string;
+  avatar?: string;
+  role: string;
+}
+
+const Sidebar: React.FC = () => {
+  const [user, setUser] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
 
-  // Fetch user data for the mini-card
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -38,7 +44,7 @@ const Sidebar = () => {
 
   const menuItems = [
     { path: '/dashboard', label: 'Overview', icon: <LayoutDashboard size={22} /> },
-    { path: '/dashboard/staff', label: 'Staff Management', icon: <ShieldUser size={22} /> }, // Added Staff link
+    { path: '/dashboard/staff', label: 'Staff Management', icon: <ShieldUser size={22} /> },
     { path: '/dashboard/patients', label: 'Patients', icon: <Users size={22} /> },
     { path: '/dashboard/doctors', label: 'Doctors', icon: <Stethoscope size={22} /> },
     { path: '/dashboard/appointments', label: 'Appointments', icon: <Calendar size={22} /> },
@@ -56,9 +62,9 @@ const Sidebar = () => {
     <aside className="hms-sidebar">
       <div className="sidebar-brand">
         <div className="brand-logo">
-          <Heart size={24} fill="white" />
+          <Heart size={24} fill="white" color="white" />
         </div>
-        <h1 className="brand-name">HMS<span>Pro</span></h1>
+        <h1 className="brand-name">MDL<span>Labs</span></h1>
       </div>
 
       <nav className="sidebar-menu">
@@ -97,19 +103,17 @@ const Sidebar = () => {
 
       <div className="sidebar-footer">
         <div className="user-mini-card">
-          <div className="avatar">
+          <div className="avatar-wrapper">
             {user?.avatar ? (
               <img src={user.avatar} alt="user" className="avatar-img" />
             ) : (
-              user?.name?.charAt(0) || 'U'
+              <div className="avatar-fallback">{user?.name?.charAt(0) || 'U'}</div>
             )}
+            <span className="online-status"></span>
           </div>
           <div className="details">
             <p className="name">{user?.name || 'Loading...'}</p>
-            <div className="status-indicator">
-              <span className="dot"></span>
-              <p className="status">Online</p>
-            </div>
+            <p className="role">{user?.role?.toLowerCase() || 'Verified'}</p>
           </div>
         </div>
       </div>

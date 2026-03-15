@@ -1,7 +1,9 @@
-import express, { Request, Response, NextFunction } from 'express'; // Fixed: Changed 'react' to 'express'
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
+import patientRoutes from './routes/patientRoutes.js'; // 🚀 Added Patient Routes
 
 // Initialize environment variables
 dotenv.config();
@@ -11,26 +13,21 @@ const PORT = process.env.PORT || 5000;
 
 // --- Middlewares ---
 app.use(cors({
-  origin: 'http://localhost:5173', 
+  origin: 'http://localhost:5173', // Vite default port
   credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Request Logger ---
-// Fixed: Explicitly added types to req, res, and next
-app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+// --- API Routes ---
+app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/patients', patientRoutes); // 🚀 Mounted at /api/patients
 
-// --- Health Check Route ---
+// --- Health Check ---
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', message: 'HMS Server is running smoothly 🚀' });
 });
-
-// --- API Routes ---
-app.use('/api/auth', authRoutes);
 
 // --- Global Error Handler ---
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
@@ -45,5 +42,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 app.listen(PORT, () => {
   console.log('--------------------------------------------------');
   console.log(`🚀 HMS Server started on: http://localhost:${PORT}`);
+  console.log(`📡 Patient API: http://localhost:${PORT}/api/patients`);
   console.log('--------------------------------------------------');
 });
